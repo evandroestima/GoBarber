@@ -7,6 +7,7 @@ interface Request {
   user_id: string;
   avatarFilename: string;
 }
+import AppError from "../errors/AppError";
 
 class UpadteUserAvatarService {
   public async execute({ user_id, avatarFilename }: Request): Promise<User> {
@@ -15,7 +16,7 @@ class UpadteUserAvatarService {
     const user = await usersRepository.findOne(user_id);
 
     if (!user) {
-      throw new Error("Tem que estar logado pra trocar o avatar");
+      throw new AppError("Tem que estar logado pra trocar o avatar", 401);
     }
 
     if (user.avatar) {
