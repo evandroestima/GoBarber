@@ -63,7 +63,7 @@ const Input: React.FC<InputProps> = ({ name, icon: Icon, ...rest }) => {
       />
       {error && (
         <Error title={error}>
-          <FiAlertCircle color="ec2300" />
+          <FiAlertCircle color="#ec2300" size={20} />
         </Error>
       )}
     </Container>
@@ -121,8 +121,19 @@ const Container = styled.div<ContainerProps>`
 
 const Error = styled(Tooltip)`
   height: 20px;
-  margin-left: 16px svg {
+  margin-left: 16px;
+
+  svg {
     margin: 0;
+  }
+
+  span {
+    background: #ec2300;
+    color: #fff;
+  }
+
+  &::before {
+    border-color: #ec2300 transparent;
   }
 `;
 
