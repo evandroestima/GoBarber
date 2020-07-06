@@ -1,12 +1,15 @@
 import React from "react";
+import { Image } from "react-native";
+
 import styled from "styled-components/native";
 import { SafeAreaView } from "react-native";
+import logoImg from "../assets/logo.png";
 
 const SignIn: React.FC = () => {
   return (
-    <SafeAreaView>
-      <SafeAreaView />
-    </SafeAreaView>
+    <Container>
+      <Image source={logoImg} />
+    </Container>
   );
 };
 
