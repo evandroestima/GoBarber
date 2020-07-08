@@ -11,6 +11,8 @@ import { useNavigation } from "@react-navigation/native";
 import { FormHandles } from "@unform/core";
 import * as yup from "yup";
 import getValidationErrors from "../utils/getValidationErrors";
+import api from "../services/api";
+import { useAuth } from "../hooks/Auth";
 
 interface SignInFormData {
   email: string;
@@ -21,35 +23,40 @@ const SignIn: React.FC = () => {
   const navigation = useNavigation();
   const formRef = useRef<FormHandles>(null);
   const passwordInputRef = useRef<TextInput>(null);
+  const { signIn } = useAuth();
 
   //funções
-  const handleSubmit = useCallback(async (data: SignInFormData) => {
-    try {
-      formRef.current?.setErrors({});
-      const schema = yup.object().shape({
-        email: yup.string().required("E-mail obrigatório").email(),
-        password: yup.string().required("Senha obrigatória"),
-      });
+  const handleSubmit = useCallback(
+    async (data: SignInFormData) => {
+      try {
+        formRef.current?.setErrors({});
+        const schema = yup.object().shape({
+          email: yup.string().required("E-mail obrigatório").email(),
+          password: yup.string().required("Senha obrigatória"),
+        });
 
-      await schema.validate(data, {
-        abortEarly: false,
-      });
+        await schema.validate(data, {
+          abortEarly: false,
+        });
 
-      /*  await signIn({
+        await signIn({
           email: data.email,
           password: data.password,
-        }); */
-    } catch (err) {
-      //se for um erro do yup, tipo não digitou senha, email inválido, etc
-      if (err instanceof yup.ValidationError) {
-        const errors = getValidationErrors(err);
-        formRef.current?.setErrors(errors);
-        return;
+        });
+      } catch (err) {
+        //se for um erro do yup, tipo não digitou senha, email inválido, etc
+        if (err instanceof yup.ValidationError) {
+          const errors = getValidationErrors(err);
+          formRef.current?.setErrors(errors);
+          return;
+        }
+        //erros mais genéricos tipo senha/email errado; dispara um toast
+        Alert.alert("Erro na autenticação", "E-mail ou senha Incorretos");
       }
-      //erros mais genéricos tipo senha/email errado; dispara um toast
-      Alert.alert("Erro na autenticação", "E-mail ou senha Incorretos");
-    }
-  }, []);
+    },
+    //ta dependendo do signIn vindo do contexto
+    [signIn]
+  );
 
   return (
     <>
@@ -78,9 +85,9 @@ const SignIn: React.FC = () => {
               name="password"
               secureTextEntry
               returnKeyType="send"
-              onSubmitEditing={() => {
+              /*  onSubmitEditing={() => {
                 formRef.current?.submitForm();
-              }}
+              }} */
               icon="lock"
               placeholder="Senha"
             />
