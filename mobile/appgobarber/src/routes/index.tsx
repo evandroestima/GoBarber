@@ -1,6 +1,6 @@
 import React from "react";
 import AuthRoutes from "./auth.routes";
-import { ActivityIndicator, View } from "react-native";
+import { ActivityIndicator, View, Alert } from "react-native";
 import AppRoutes from "./app.routes";
 import { useAuth } from "../hooks/Auth";
 
@@ -12,7 +12,6 @@ const Routes: React.FC = () => {
       <ActivityIndicator size="large" color="#999" />
     </View>;
   }
-
   return user ? <AppRoutes /> : <AuthRoutes />;
 };
 

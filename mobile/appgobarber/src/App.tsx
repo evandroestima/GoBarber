@@ -4,7 +4,7 @@ import React from "react";
 import { SafeAreaView, Text, StatusBar } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import AppProvider from "./hooks";
-import Routes from "./routes/auth.routes";
+import Routes from "./routes/index";
 
 const App: React.FC = () => {
   return (

@@ -43,6 +43,7 @@ const SignIn: React.FC = () => {
           email: data.email,
           password: data.password,
         });
+        //Alert.alert(data.password);
       } catch (err) {
         //se for um erro do yup, tipo não digitou senha, email inválido, etc
         if (err instanceof yup.ValidationError) {
