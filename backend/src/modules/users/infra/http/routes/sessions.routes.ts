@@ -1,6 +1,5 @@
 import { Router } from "express";
-import AuthenticateUserService from "../../../services/AuthenticateUserService";
-import { container } from "tsyringe";
+
 import SessionsController from "../controllers/SessionsController";
 const sessionsRouter = Router();
 
