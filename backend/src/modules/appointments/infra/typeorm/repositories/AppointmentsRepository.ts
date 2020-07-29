@@ -21,7 +21,7 @@ class AppointmentsRepository implements IAppointmentsRepository {
   }: IFindAllInDayFromProvider): Promise<Appointment[]> {
     //esse padstart ve se o numero tem 2 digitos. se não tiver, bota um 0 na frente
     const parsedMonth = String(month).padStart(2, "0");
-    const parsedDay = String(day).padStart(2, 0);
+    const parsedDay = String(day).padStart(2, "0");
 
     const appointments = await this.ormRepository.find({
       where: {
@@ -31,6 +31,8 @@ class AppointmentsRepository implements IAppointmentsRepository {
         }),
       },
     });
+
+    await this.ormRepository.save(appointments);
 
     return appointments;
   }
@@ -52,6 +54,8 @@ class AppointmentsRepository implements IAppointmentsRepository {
       },
     });
 
+    await this.ormRepository.save(appointments);
+
     return appointments;
   }
 
@@ -65,9 +69,14 @@ class AppointmentsRepository implements IAppointmentsRepository {
   //essa parada na frente ali é o tipo do retorno
   public async create({
     provider_id,
+    user_id,
     date,
   }: ICreateAppointmentDTO): Promise<Appointment> {
-    const appointment = this.ormRepository.create({ provider_id, date });
+    const appointment = this.ormRepository.create({
+      provider_id,
+      user_id,
+      date,
+    });
 
     await this.ormRepository.save(appointment);
 
