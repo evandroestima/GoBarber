@@ -5,6 +5,7 @@ import IMailProvider from "./MailProvider/Models/IMailProvider";
 import EtherealMailProvider from "./MailProvider/Implementations/EtherealMailProvider";
 import IMailTemplateProvider from "./MailTemplateProvider/Models/IMailTemplateProvider";
 import HandlebarsMailTemplateProvider from "./MailTemplateProvider/Implementations/HandlebarsMailTemplateProvider";
+import "./CacheProvider";
 
 container.registerSingleton<IStorageProvider>(
   "StorageProvider",

@@ -3,6 +3,7 @@ import { container } from "tsyringe";
 import UsersRepository from "../../typeorm/repositories/UsersRepository";
 import CreateUserService from "@modules/users/services/CreateUserService";
 import UpadteUserAvatarService from "@modules/users/services/UpdateUserAvatarService";
+import { classToClass } from "class-transformer";
 
 export default class UsersController {
   public async create(request: Request, response: Response): Promise<Response> {
@@ -16,9 +17,8 @@ export default class UsersController {
       email,
       password,
     });
-    delete user.password;
 
-    return response.status(200).json(user);
+    return response.status(200).json(classToClass(user));
   }
 
   public async patch(request: Request, response: Response): Promise<Response> {
@@ -31,6 +31,6 @@ export default class UsersController {
 
     delete user.password;
 
-    return response.json(user);
+    return response.json(classToClass(user));
   }
 }
