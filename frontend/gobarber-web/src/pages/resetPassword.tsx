@@ -1,3 +1,5 @@
+/* eslint-disable react-hooks/rules-of-hooks */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useCallback, useRef } from "react";
 import styled, { keyframes } from "styled-components";
 import { Form } from "@unform/web";
@@ -5,45 +7,65 @@ import { FormHandles } from "@unform/core";
 import * as yup from "yup";
 import logoImg from "../assets/logo.svg";
 import SignInBackground from "../assets/sign-in-background.png";
-import { FiLogIn, FiMail, FiLock } from "react-icons/fi";
+import { FiLock } from "react-icons/fi";
 import { shade } from "polished";
 import Input from "../components/input";
 import Button from "../components/button";
 import getValidationErrors from "../utils/getValidationErrors";
-import { useAuth } from "../hooks/Auth";
 import { useToast } from "../hooks/Toast";
-import { Link } from "react-router-dom";
+import { useHistory, useLocation } from "react-router-dom";
+import api from "../services/api";
 
-interface SignInFormData {
-  email: string;
+interface resetPasswordFormData {
   password: string;
+  password_confirmation: string;
 }
 
-const SignIn: React.FC = () => {
+const resetPassword: React.FC = () => {
   const formRef = useRef<FormHandles>(null);
 
-  const { signIn } = useAuth();
-
   const { addToast } = useToast();
+  const history = useHistory();
+  const location = useLocation();
 
   //funções
   const handleSubmit = useCallback(
-    async (data: SignInFormData) => {
+    async (data: resetPasswordFormData) => {
       try {
         formRef.current?.setErrors({});
         const schema = yup.object().shape({
-          email: yup.string().required("E-mail obrigatório").email(),
           password: yup.string().required("Senha obrigatória"),
+          password_confirmation: yup
+            .string()
+            .oneOf(
+              [yup.ref("password"), undefined],
+              "As senhas devem ser iguais"
+            ),
         });
 
         await schema.validate(data, {
           abortEarly: false,
         });
 
-        await signIn({
-          email: data.email,
+        const token = location.search.replace("?token=", "");
+
+        if (!token) {
+          addToast({
+            type: "error",
+            title: "Erro ao resetar senha",
+            description:
+              "Ocorreu um erro ao resetar sua senha, tente novamente",
+          });
+          return;
+        }
+
+        await api.post("/password/reset", {
           password: data.password,
+          password_confirmation: data.password_confirmation,
+          token,
         });
+
+        history.push("/");
       } catch (err) {
         //se for um erro do yup, tipo não digitou senha, email inválido, etc
         if (err instanceof yup.ValidationError) {
@@ -54,12 +76,12 @@ const SignIn: React.FC = () => {
         //erros mais genéricos tipo senha/email errado; dispara um toast
         addToast({
           type: "error",
-          title: "Erro na autenticação",
-          description: "E-mail ou senha Incorretos",
+          title: "Erro ao resetar senha",
+          description: "Ocorreu um erro ao resetar sua senha, tente novamente",
         });
       }
     },
-    [signIn, addToast]
+    [addToast, history, location.search]
   );
 
   return (
@@ -68,24 +90,23 @@ const SignIn: React.FC = () => {
         <AnimationContainer>
           <img src={logoImg} alt="GoBarber" />
           <Form ref={formRef} onSubmit={handleSubmit}>
-            <h1>Faça seu login </h1>
-            <Input name="email" icon={FiMail} placeholder="E-mail"></Input>
+            <h1> Resetar sua senha </h1>
             <Input
               name="password"
               icon={FiLock}
-              placeholder="Senha"
+              placeholder="Nova senha"
+              type="password"
+            ></Input>
+            <Input
+              name="password_confirmation"
+              icon={FiLock}
+              placeholder="Confirmação da senha"
               type="password"
             ></Input>
             <Button name="submitButton" type="submit">
-              Entrar
+              Alterar senha
             </Button>
-            <Link to="/forgot-password">Esqueci minha senha</Link>
           </Form>
-
-          <Link to="/signup">
-            Criar conta
-            <FiLogIn />
-          </Link>
         </AnimationContainer>
       </Content>
       <Background />
@@ -178,4 +199,4 @@ const Background = styled.div`
   background-size: cover;
 `;
 
-export default SignIn;
+export default resetPassword;

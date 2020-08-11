@@ -2,10 +2,16 @@ import React, { ButtonHTMLAttributes } from "react";
 import styled from "styled-components";
 import { shade } from "polished";
 
-interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {}
+type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
+  loading?: boolean;
+};
 
-const Button: React.FC<ButtonProps> = (props) => {
-  return <Container {...props} />;
+const Button: React.FC<ButtonProps> = ({ children, loading, ...rest }) => {
+  return (
+    <Container type="button" {...rest}>
+      {loading ? "Carregando..." : children}
+    </Container>
+  );
 };
 
 //styles

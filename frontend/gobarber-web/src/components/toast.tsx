@@ -11,7 +11,7 @@ import { ToastMessage, useToast } from "../hooks/Toast";
 
 interface ContainerProps {
   type?: "succes" | "error" | "info";
-  hasDescription: boolean;
+  hasDescription: number;
 }
 
 interface ToastProps {
@@ -42,7 +42,7 @@ const Toast: React.FC<ToastProps> = ({ message, style }) => {
     //!!message.hasdescription transforma em boolean então se tiver, retorna true e tem description
     <Container
       type={message.type}
-      hasDescription={!!message.description}
+      hasDescription={Number(!!message.description)}
       style={style}
     >
       {icons[message.type || "info"]}
