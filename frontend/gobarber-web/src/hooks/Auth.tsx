@@ -7,13 +7,19 @@ interface SignInCredentials {
   password: string;
 }
 
+interface User {
+  id: string;
+  avatar_url: string;
+  name: string;
+}
+
 interface AuthState {
   token: string;
-  user: object;
+  user: User;
 }
 
 interface AuthContextData {
-  user: object;
+  user: User;
   //toda vez que o metodo é assincrono, ele obrigatoriamente retorna uma promise
   signIn(credentials: SignInCredentials): Promise<void>;
   signOut(): void;
@@ -36,8 +42,8 @@ export const AuthProvider: React.FC = ({ children }) => {
 
   //funções
   const signOut = useCallback(() => {
-    const token = localStorage.removeItem("@GoBarber:token");
-    const user = localStorage.removeItem("@GoBarber:user");
+    localStorage.removeItem("@GoBarber:token");
+    localStorage.removeItem("@GoBarber:user");
 
     setData({} as AuthState);
   }, []);
